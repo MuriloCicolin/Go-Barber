@@ -16,11 +16,11 @@ class CreateUserService {
       where: { email },
     });
 
-    const hashedPassword = await hash(password, 8);
-
     if (checkUserExists) {
       throw new Error('Email adress already used');
     }
+
+    const hashedPassword = await hash(password, 8);
 
     const user = userRepository.create({
       name,
