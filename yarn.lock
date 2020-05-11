@@ -3354,6 +3354,13 @@ tsutils@^3.17.1:
   dependencies:
     tslib "^1.8.1"
 
+tsyringe@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/tsyringe/-/tsyringe-4.2.0.tgz#98aca590e19f02949e63a8e374e77e5c8513d594"
+  integrity sha512-NV5BODaXYJJII2MFlSJMiyVVSYW8GjqS5+YAkzATINrH5SlLiz2fS24RLt6/GfodR428ZH6Cykko4yabzJ5wNw==
+  dependencies:
+    tslib "^1.9.3"
+
 type-check@~0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/type-check/-/type-check-0.3.2.tgz#5884cab512cf1d355e3fb784f30804b2b520db72"
