@@ -1,9 +1,8 @@
+import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
-import { inject, injectable } from 'tsyringe';
-import User from '../infra/typeorm/entities/User';
-
+import { injectable, inject } from 'tsyringe';
+import IHashProvider from '@modules/users/providers/HashProvider/models/IHashProvider';
 import IUsersRepository from '../repositories/IUsersRepository';
-import IHashProvider from '../providers/HashProvider/models/IHashProvider';
 
 interface IRequest {
   user_id: string;
@@ -14,7 +13,7 @@ interface IRequest {
 }
 
 @injectable()
-class UpdateProfile {
+class UpdateProfileService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
@@ -25,13 +24,12 @@ class UpdateProfile {
 
   public async execute({
     user_id,
-    email,
     name,
+    email,
     old_password,
     password,
   }: IRequest): Promise<User> {
     const user = await this.usersRepository.findById(user_id);
-
     if (!user) {
       throw new AppError('User not found');
     }
@@ -39,8 +37,11 @@ class UpdateProfile {
     const userWithUpdatedEmail = await this.usersRepository.findByEmail(email);
 
     if (userWithUpdatedEmail && userWithUpdatedEmail.id !== user_id) {
-      throw new AppError('E-mail already in use');
+      throw new AppError('Already have a user with this email');
     }
+
+    user.name = name;
+    user.email = email;
 
     if (password && !old_password) {
       throw new AppError(
@@ -55,16 +56,16 @@ class UpdateProfile {
       );
 
       if (!checkOldPassword) {
-        throw new AppError('Old password does not match');
+        throw new AppError('Old password does not macth');
       }
+
       user.password = await this.hashProvider.generateHash(password);
     }
 
-    user.name = name;
-    user.email = email;
+    await this.usersRepository.save(user);
 
-    return this.usersRepository.save(user);
+    return user;
   }
 }
 
-export default UpdateProfile;
+export default UpdateProfileService;
